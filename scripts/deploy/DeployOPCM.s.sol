@@ -201,6 +201,7 @@ contract DeployOPCM is Script {
             permissionlessDisputeGame1: address(0),
             permissionlessDisputeGame2: address(0)
         });
+
         OPContractsManager.Implementations memory implementations = OPContractsManager.Implementations({
             l1ERC721BridgeImpl: address(_doi.l1ERC721BridgeImpl()),
             optimismPortalImpl: address(_doi.optimismPortalImpl()),
@@ -238,6 +239,7 @@ contract DeployOPCM is Script {
         opcm_ = new OPContractsManager(
             _superchainConfig, _protocolVersions, _l1ContractsRelease, _blueprints, _implementations
         );
+        console.log("==================================== OPContractsManager Address ============================================", address(opcm));
         vm.label(address(opcm_), "OPContractsManager");
     }
 

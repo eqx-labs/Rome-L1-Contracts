@@ -206,8 +206,6 @@ contract Deploy is Deployer {
 
         deployImplementations({ _isInterop: cfg.useInterop() });
 
-        return;
-
         // Deploy Current OPChain Contracts
         deployOpChain();
 
@@ -365,11 +363,13 @@ contract Deploy is Deployer {
 
     /// @notice Deploy all of the OP Chain specific contracts
     function deployOpChain() public {
-        console.log("Deploying OP Chain");
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Deploying OP Chain!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
         // Ensure that the requisite contracts are deployed
         address superchainConfigProxy = artifacts.mustGetAddress("SuperchainConfigProxy");
         OPContractsManager opcm = OPContractsManager(artifacts.mustGetAddress("OPContractsManager"));
+
+        console.log("2222222222222222222222222222 opcm address 22222222222222222222222222222222", address(opcm));
 
         OPContractsManager.DeployInput memory deployInput = getDeployInput();
         OPContractsManager.DeployOutput memory deployOutput = opcm.deploy(deployInput);
@@ -419,6 +419,8 @@ contract Deploy is Deployer {
         transferDisputeGameFactoryOwnership();
         transferDelayedWETHOwnership();
         transferPermissionedDelayedWETHOwnership();
+
+        console.log("44444444444444444444444444444444444444444444444444444444444444444444444444444444");
     }
 
     /// @notice Add AltDA setup to the OP chain

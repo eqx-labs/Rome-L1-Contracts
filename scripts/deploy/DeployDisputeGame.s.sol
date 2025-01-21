@@ -286,7 +286,9 @@ contract DeployDisputeGame is Script {
         // PermissionedDisputeGame is used as the type here because it is a superset of
         // FaultDisputeGame. If the user requests to deploy a FaultDisputeGame, the user will get a
         // FaultDisputeGame (and not a PermissionedDisputeGame).
-        vm.broadcast(msg.sender);
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.broadcast(deployerPrivateKey);
         IPermissionedDisputeGame impl;
         if (LibString.eq(_dgi.gameKind(), "FaultDisputeGame")) {
             impl = IPermissionedDisputeGame(

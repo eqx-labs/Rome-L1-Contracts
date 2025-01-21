@@ -59,12 +59,16 @@ contract SetDisputeGameImpl is Script {
         IFaultDisputeGame impl = _input.impl();
         IOptimismPortal2 portal = _input.portal();
 
-        vm.broadcast(msg.sender);
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.broadcast(deployerPrivateKey);
         factory.setImplementation(gameType, impl);
 
         if (address(portal) != address(0)) {
             require(address(portal.disputeGameFactory()) == address(factory), "SDGI-20");
-            vm.broadcast(msg.sender);
+            uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.broadcast(deployerPrivateKey);
             portal.setRespectedGameType(gameType);
         }
 

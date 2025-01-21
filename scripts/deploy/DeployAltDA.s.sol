@@ -111,12 +111,15 @@ contract DeployAltDA is Script {
 
     function deployDataAvailabilityChallengeProxy(DeployAltDAInput _dai, DeployAltDAOutput _dao) public {
         bytes32 salt = _dai.salt();
-        vm.broadcast(msg.sender);
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.broadcast(deployerPrivateKey);
+        // vm.broadcast(msg.sender);
         IProxy proxy = IProxy(
             DeployUtils.create2({
                 _name: "Proxy",
                 _salt: salt,
-                _args: DeployUtils.encodeConstructor(abi.encodeCall(IProxy.__constructor__, (msg.sender)))
+                _args: DeployUtils.encodeConstructor(abi.encodeCall(IProxy.__constructor__, (deployerPubkey)))
             })
         );
         vm.label(address(proxy), "DataAvailabilityChallengeProxy");
@@ -125,7 +128,9 @@ contract DeployAltDA is Script {
 
     function deployDataAvailabilityChallengeImpl(DeployAltDAInput _dai, DeployAltDAOutput _dao) public {
         bytes32 salt = _dai.salt();
-        vm.broadcast(msg.sender);
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.broadcast(deployerPubkey);
         IDataAvailabilityChallenge impl = IDataAvailabilityChallenge(
             DeployUtils.create2({
                 _name: "DataAvailabilityChallenge",
@@ -148,7 +153,9 @@ contract DeployAltDA is Script {
         uint256 bondSize = _dai.bondSize();
         uint256 resolverRefundPercentage = _dai.resolverRefundPercentage();
 
-        vm.startBroadcast(msg.sender);
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.startBroadcast(deployerPubkey);
         proxy.upgradeToAndCall(
             address(impl),
             abi.encodeCall(

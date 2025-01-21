@@ -66,7 +66,10 @@ contract Deploy is Deployer {
 
     /// @notice Modifier that wraps a function in broadcasting.
     modifier broadcast() {
-        vm.startBroadcast(msg.sender);
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.startBroadcast(deployerPrivateKey);
+        // vm.startBroadcast(msg.sender);
         _;
         vm.stopBroadcast();
     }
@@ -194,17 +197,16 @@ contract Deploy is Deployer {
     /// @notice Internal function containing the deploy logic.
     function _run(bool _needsSuperchain) internal virtual {
         console.log("start of L1 Deploy!");
-
         // Set up the Superchain if needed.
         if (_needsSuperchain) {
             deploySuperchain();
         }
 
-        console.log("/////////////////////////////////////////////////");
-
-        return;
+        console.log("///////////////////////////////////////////////// End SuperChain");
 
         deployImplementations({ _isInterop: cfg.useInterop() });
+
+        return;
 
         // Deploy Current OPChain Contracts
         deployOpChain();
@@ -245,9 +247,9 @@ contract Deploy is Deployer {
     function deploySuperchain() public {
         console.log("Setting up Superchain");
         DeploySuperchain ds = new DeploySuperchain();
-        
+        console.log("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ Deployed SuperChain");
         (DeploySuperchainInput dsi, DeploySuperchainOutput dso) = ds.etchIOContracts();
-
+        
         // Set the input values on the input contract.
         // TODO: when DeployAuthSystem is done, finalSystemOwner should be replaced with the Foundation Upgrades Safe
         dsi.set(dsi.protocolVersionsOwner.selector, cfg.finalSystemOwner());
@@ -399,12 +401,15 @@ contract Deploy is Deployer {
             permissionlessGameImpl == address(0),
             "Deploy: The PermissionlessDelayedWETH is already set by the OPCM, it is no longer necessary to deploy it separately."
         );
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
         address delayedWETHImpl = artifacts.mustGetAddress("DelayedWETHImpl");
-        address delayedWETHPermissionlessGameProxy = deployERC1967ProxyWithOwner("DelayedWETHProxy", msg.sender);
-        vm.broadcast(msg.sender);
+        address delayedWETHPermissionlessGameProxy = deployERC1967ProxyWithOwner("DelayedWETHProxy", deployerPubkey);
+        
+        vm.broadcast(deployerPrivateKey);
         IProxy(payable(delayedWETHPermissionlessGameProxy)).upgradeToAndCall({
             _implementation: delayedWETHImpl,
-            _data: abi.encodeCall(IDelayedWETH.initialize, (msg.sender, ISuperchainConfig(superchainConfigProxy)))
+            _data: abi.encodeCall(IDelayedWETH.initialize, (deployerPubkey, ISuperchainConfig(superchainConfigProxy)))
         });
 
         setAlphabetFaultGameImplementation();

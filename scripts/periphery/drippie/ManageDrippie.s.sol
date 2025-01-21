@@ -34,7 +34,9 @@ contract ManageDrippie is Script {
 
     /// @notice Modifier that wraps a function in broadcasting.
     modifier broadcast() {
-        vm.startBroadcast(msg.sender);
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.startBroadcast(deployerPrivateKey);
         _;
         vm.stopBroadcast();
     }

@@ -308,6 +308,8 @@ contract DeploySuperchain is Script {
         // additional verification logic.
 
         // Deploy the proxy admin, with the owner set to the deployer.
+
+        console.log("D++++++++++++++++++++++++++eploySuperChain Run+++++++++++++++++++++++++++");
         deploySuperchainProxyAdmin(_dsi, _dso);
 
         // Deploy and initialize the superchain contracts.
@@ -317,6 +319,8 @@ contract DeploySuperchain is Script {
 
         // Transfer ownership of the ProxyAdmin from the deployer to the specified owner.
         transferProxyAdminOwnership(_dsi, _dso);
+
+        console.log("============================================= AfterTransferProxyAdminOwnership ==============================");
 
         // Output assertions, to make sure outputs were assigned correctly.
         _dso.checkOutput(_dsi);
@@ -329,16 +333,22 @@ contract DeploySuperchain is Script {
         // We explicitly specify the deployer as `msg.sender` because for testing we deploy this script from a test
         // contract. If we provide no argument, the foundry default sender would be the broadcaster during test, but the
         // broadcaster needs to be the deployer since they are set to the initial proxy admin owner.
-        vm.broadcast(msg.sender);
-        console.log("deployer", address(msg.sender));
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.startBroadcast(deployerPrivateKey);
+        // console.log("deployer", address(msg.sender));
         IProxyAdmin superchainProxyAdmin = IProxyAdmin(
             DeployUtils.create1({
                 _name: "ProxyAdmin",
-                _args: DeployUtils.encodeConstructor(abi.encodeCall(IProxyAdmin.__constructor__, (msg.sender)))
+                _args: DeployUtils.encodeConstructor(abi.encodeCall(IProxyAdmin.__constructor__, (deployerPubkey)))
             })
         );
 
-        console.log("//////////////////////////////////////deployed proxy admin address/////////////////////////////////", address(superchainProxyAdmin));
+        console.log("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ deployed proxy admin address /////////////////////////////////", address(superchainProxyAdmin));
+        console.log("=========== TEST ==========");
+        vm.stopBroadcast();
+
+        console.log("=========== TEST ==========");
 
         vm.label(address(superchainProxyAdmin), "SuperchainProxyAdmin");
         _dso.set(_dso.superchainProxyAdmin.selector, address(superchainProxyAdmin));
@@ -346,7 +356,9 @@ contract DeploySuperchain is Script {
 
     function deploySuperchainImplementationContracts(DeploySuperchainInput, DeploySuperchainOutput _dso) public {
         // Deploy implementation contracts.
-        vm.startBroadcast(msg.sender);
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.startBroadcast(deployerPrivateKey);
         ISuperchainConfig superchainConfigImpl = ISuperchainConfig(
             DeployUtils.createDeterministic({
                 _name: "SuperchainConfig",
@@ -377,7 +389,9 @@ contract DeploySuperchain is Script {
         IProxyAdmin superchainProxyAdmin = _dso.superchainProxyAdmin();
         ISuperchainConfig superchainConfigImpl = _dso.superchainConfigImpl();
 
-        vm.startBroadcast(msg.sender);
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.startBroadcast(deployerPrivateKey);
         ISuperchainConfig superchainConfigProxy = ISuperchainConfig(
             DeployUtils.create1({
                 _name: "Proxy",
@@ -405,7 +419,9 @@ contract DeploySuperchain is Script {
         IProxyAdmin superchainProxyAdmin = _dso.superchainProxyAdmin();
         IProtocolVersions protocolVersionsImpl = _dso.protocolVersionsImpl();
 
-        vm.startBroadcast(msg.sender);
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.startBroadcast(deployerPrivateKey);
         IProtocolVersions protocolVersionsProxy = IProtocolVersions(
             DeployUtils.create1({
                 _name: "Proxy",
@@ -434,8 +450,11 @@ contract DeploySuperchain is Script {
         IProxyAdmin superchainProxyAdmin = _dso.superchainProxyAdmin();
         DeployUtils.assertValidContractAddress(address(superchainProxyAdmin));
 
-        vm.broadcast(msg.sender);
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.startBroadcast(deployerPrivateKey);
         superchainProxyAdmin.transferOwnership(superchainProxyAdminOwner);
+        vm.stopBroadcast();
     }
 
     // -------- Utilities --------

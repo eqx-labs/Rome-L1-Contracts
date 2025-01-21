@@ -59,7 +59,9 @@ contract DeployProxy is Script {
 
     function deployProxySingleton(DeployProxyInput _mi, DeployProxyOutput _mo) internal {
         address owner = _mi.owner();
-        vm.broadcast(msg.sender);
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.broadcast(deployerPrivateKey);
         IProxy proxy = IProxy(
             DeployUtils.create1({
                 _name: "Proxy",

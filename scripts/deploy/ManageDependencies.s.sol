@@ -53,7 +53,9 @@ contract ManageDependencies is Script {
         ISystemConfigInterop systemConfig = _input.systemConfig();
 
         // Call the appropriate function based on the remove flag
-        vm.broadcast(msg.sender);
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.broadcast(deployerPrivateKey);
         if (remove) {
             systemConfig.removeDependency(chainId);
         } else {

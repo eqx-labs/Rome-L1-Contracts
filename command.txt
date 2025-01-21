@@ -5,13 +5,22 @@ DEPLOY_CONFIG_PATH=deploy-config/holesky.json \
   --broadcast --private-key 2cb26dcd8b503c3a708448fb27ebd2f725ef1a1305014ec0e44a9f89d204ee0e \
   --rpc-url https://eth-holesky.g.alchemy.com/v2/dF3pLDZtI7_HZv7dbnWOIWaLTdy2rKTl --etherscan-api-key 36RT7FFYERR5NVWSSZ1J7CH98KEIZCK5JF --verify
 
-  DEPLOYMENT_OUTFILE=deployments/artifact.json \
+
+// Holesky Public Node
+DEPLOYMENT_OUTFILE=deployments/artifact.json \
 CHAIN_ID=17000 \
 DEPLOY_CONFIG_PATH=deploy-config/holesky.json \
-  forge script scripts/deploy/Deploy.s.sol:Deploy \
+  forge script -vvv scripts/deploy/Deploy.s.sol:Deploy \
   --broadcast --private-key 2cb26dcd8b503c3a708448fb27ebd2f725ef1a1305014ec0e44a9f89d204ee0e \
-  --rpc-url https://ethereum-holesky-rpc.publicnode.com
- --etherscan-api-key 36RT7FFYERR5NVWSSZ1J7CH98KEIZCK5JF --verify
+  --rpc-url https://ethereum-holesky-rpc.publicnode.com \
+  --etherscan-api-key 36RT7FFYERR5NVWSSZ1J7CH98KEIZCK5JF --verify
 
-  
+DEPLOYMENT_OUTFILE=deployments/artifact.json \
+CHAIN_ID=3151908 \
+DEPLOY_CONFIG_PATH=deploy-config/holesky.json \
+  forge script -vvv scripts/deploy/Deploy.s.sol:Deploy \
+  --broadcast --private-key 2cb26dcd8b503c3a708448fb27ebd2f725ef1a1305014ec0e44a9f89d204ee0e \
+  --rpc-url http://127.0.0.1:33125 \
+  --etherscan-api-key 36RT7FFYERR5NVWSSZ1J7CH98KEIZCK5JF --verify
+ 
 forge script -vvv scripts/deploy/Deploy.s.sol:Deploy --sig 'runWithStateDiff()' --rpc-url https://eth-holesky.g.alchemy.com/v2/dF3pLDZtI7_HZv7dbnWOIWaLTdy2rKTl --broadcast --private-key --private-key 2cb26dcd8b503c3a708448fb27ebd2f725ef1a1305014ec0e44a9f89d204ee0e

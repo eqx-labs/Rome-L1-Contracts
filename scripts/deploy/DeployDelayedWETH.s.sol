@@ -181,7 +181,9 @@ contract DeployDelayedWETH is Script {
         if (existingImplementation != address(0)) {
             impl = IDelayedWETH(payable(existingImplementation));
         } else if (isDevelopRelease(release)) {
-            vm.broadcast(msg.sender);
+            uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+            address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+            vm.broadcast(deployerPrivateKey);
             impl = IDelayedWETH(
                 DeployUtils.create1({
                     _name: "DelayedWETH",
@@ -199,18 +201,23 @@ contract DeployDelayedWETH is Script {
     }
 
     function deployDelayedWethProxy(DeployDelayedWETHInput _dwi, DeployDelayedWETHOutput _dwo) internal {
-        vm.broadcast(msg.sender);
+        
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.broadcast(deployerPrivateKey);
         IProxy proxy = IProxy(
             DeployUtils.create1({
                 _name: "Proxy",
-                _args: DeployUtils.encodeConstructor(abi.encodeCall(IProxy.__constructor__, (msg.sender)))
+                _args: DeployUtils.encodeConstructor(abi.encodeCall(IProxy.__constructor__, (deployerPubkey)))
             })
         );
 
         deployDelayedWethImpl(_dwi, _dwo);
         IDelayedWETH impl = _dwo.delayedWethImpl();
 
-        vm.startBroadcast(msg.sender);
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.startbroadcast(deployerPrivateKey);
         proxy.upgradeToAndCall(
             address(impl), abi.encodeCall(impl.initialize, (_dwi.delayedWethOwner(), _dwi.superchainConfigProxy()))
         );

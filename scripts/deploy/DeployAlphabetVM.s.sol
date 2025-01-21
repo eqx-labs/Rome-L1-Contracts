@@ -55,7 +55,9 @@ contract DeployAlphabetVM is Script {
         Claim absolutePrestate = Claim.wrap(_input.absolutePrestate());
         IPreimageOracle preimageOracle = _input.preimageOracle();
 
-        vm.broadcast(msg.sender);
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.broadcast(deployerPrivateKey);
         AlphabetVM alphabetVM = new AlphabetVM(absolutePrestate, preimageOracle);
 
         _output.set(_output.alphabetVM.selector, address(alphabetVM));

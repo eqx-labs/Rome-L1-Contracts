@@ -49,7 +49,9 @@ contract DeployPreimageOracle is Script {
         uint256 minProposalSize = _input.minProposalSize();
         uint256 challengePeriod = _input.challengePeriod();
 
-        vm.broadcast(msg.sender);
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.broadcast(deployerPrivateKey);
         IPreimageOracle preimageOracle = IPreimageOracle(
             DeployUtils.create1({
                 _name: "PreimageOracle",

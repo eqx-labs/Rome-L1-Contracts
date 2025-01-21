@@ -232,7 +232,9 @@ contract DeployOPCM is Script {
         public
         returns (OPContractsManager opcm_)
     {
-        vm.broadcast(msg.sender);
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployerPubkey = vm.envAddress("DEPLOYER_ADDR");
+        vm.broadcast(deployerPrivateKey);
         opcm_ = new OPContractsManager(
             _superchainConfig, _protocolVersions, _l1ContractsRelease, _blueprints, _implementations
         );
